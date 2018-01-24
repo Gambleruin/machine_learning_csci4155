@@ -2,6 +2,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
 
 # this is the data for training purposes
 train_data =np.loadtxt('wine_train.txt', delimiter =',')
@@ -11,26 +12,20 @@ train_data =np.loadtxt('wine_train.txt', delimiter =',')
 # test_data =np.delete(test_data, 0, axis =1)
 # print(test_data)
 
-# getting all the features from wine data 
 features =train_data[:, 1:]
-print(features, '\n')
-
-# getting all the target(y) value
 target =np.int32(train_data[:, 0])
-print(target)
-
-# training/testing data split
 X_train, X_test, y_train, y_test =train_test_split(
-	features, target, test_size =0.15, random_state =42)
+	features, target, test_size =0.2, random_state =42)
 
 # choosing svm for classification
-clf =SVC(kernel ='linear', C =1).fit(features, target)
-
+# model =SVC(kernel ='linear', C =1).fit(X_train, y_train)
+model =SVC(kernel='rbf', C=1.2).fit(X_train, y_train)
+print(y_test.shape, '\n', y_train.shape)
 # prediction from testing data 
-# svm_predictions =clf.predict(test_data)
+svm_predictions =model.predict(X_test)
 
 # model accuracy for X_test
-# accuracy =clf.score()
-
+accuracy =model.score(X_test, y_test)
+print(accuracy)
 
 
