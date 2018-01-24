@@ -45,7 +45,11 @@ if __name__ == '__main__':
 		model =svm.SVC(kernel ='linear')
 		model.fit(iter_train_x, iter_train_y)
 		predicted_y =model.predict(iter_test_x)
-		# print('percentage of accuracy to the model is: \n', np.mean(iter_test_y ==predicted_y), '\n')
+		print('percentage of accuracy to the svm model is: \n', np.mean(iter_test_y ==predicted_y), '\n')
+
+		model_rf =RandomForestClassifier(n_estimators =10).fit(iter_train_x, iter_train_y)
+		predicted_y_rf =model_rf.predict(iter_test_x)
+		print('percentage of accuracy to the rf model is: \n', np.mean(iter_test_y ==predicted_y_rf), '\n')
 		# print(validation[:,0:4], '\n\n\n')
 		
 	# print(training.shape, '\n', validation.shape )
