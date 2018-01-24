@@ -11,7 +11,7 @@ train_y =np.int32(iris_data[0:-1:2,4])
 test_x =iris_data[1:-1:2,0:4]
 test_y =np.int32(iris_data[1:-1:2,4])
 
-# model
+# model for training
 model =svm.SVC(kernel ='linear')
 # train
 model.fit(train_x, train_y)
