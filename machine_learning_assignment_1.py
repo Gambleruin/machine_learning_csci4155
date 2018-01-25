@@ -3,14 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
 
 # this is the data for training purposes
 train_data =np.loadtxt('wine_train.txt', delimiter =',')
-# test_data =np.loadtxt('wine_test.txt', delimiter =',')
+test_data =np.loadtxt('wine_test.txt', delimiter =',')
 
 # remove labels from test data
-# test_data =np.delete(test_data, 0, axis =1)
+test_data_no_lable =np.delete(test_data, 0, axis =1)
 # print(test_data)
 
 features =train_data[:, 1:]
@@ -21,12 +21,15 @@ X_train, X_test, y_train, y_test =train_test_split(
 # choosing svm for classification
 # model =SVC(kernel ='linear', C =1).fit(X_train, y_train)
 # model =SVC(kernel='rbf', C=1.2).fit(X_train, y_train)
-model =RandomForestClassifier(n_estimators =10).fit(X_train, y_train)
-svm_predictions =model.predict(X_test)
+k_fold =KFold(n_splits =5)
+model_rf =RandomForestClassifier(n_estimators =10).fit(X_train, y_train)
+print(cross_val_score(model_rf, X_train, y_train, cv =k_fold, n_jobs =-1), '\n')
 
-# model accuracy for X_test
-accuracy =model.score(X_test, y_test)
-print(accuracy)
+model =SVC(kernel='rbf', C=1).fit(X_train, y_train)
+print(cross_val_score(model_rf, X_train, y_train, cv =k_fold, n_jobs =-1), '\n')
+
+final_prediction =model.predict(test_data_no_lable)
+print(final_prediction)
 
 
 
