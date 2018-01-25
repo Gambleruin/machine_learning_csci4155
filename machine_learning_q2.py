@@ -8,25 +8,12 @@ from sklearn.ensemble import RandomForestClassifier
 iris_data =np.loadtxt('iris_data.txt', delimiter =',')
 train_x =iris_data[0: -1:2,0:4]
 train_y =np.int32(iris_data[0:-1:2,4])
-test_x =iris_data[1:-1:2,0:4]
-test_y =np.int32(iris_data[1:-1:2,4])
-
-# model for training
-model =svm.SVC(kernel ='linear')
-# train
-model.fit(train_x, train_y)
-# prediction
-predicted_y =model.predict(test_x)
-# evaluation
-# print('percentage_correct_(accuracy) of svm is: \n)', np.mean(test_y ==predicted_y))
-
+# test_x =iris_data[1:-1:2,0:4]
+# test_y =np.int32(iris_data[1:-1:2,4])
 # the k-fold cross validation method (also called just cross validation) is a resampling
 # method that provides a more accurate estimate of algorithm performance. 
 vali_ready =iris_data[0: -1:2]
-
-
-
-# self_customised cross validation
+# self_customised cross validation function
 def cross_validation_split(train_data, K, randomise =False):
 	for k in range(K):
 		training =[x for i, x in enumerate(train_data) if i%K !=k]
@@ -34,6 +21,7 @@ def cross_validation_split(train_data, K, randomise =False):
 		yield training, validation 
 
 if __name__ == '__main__':
+	k_fold =KFold(n_splits =5)
 	for training, validation in cross_validation_split(vali_ready, 5):
 		training =np.asarray(training)
 		validation =np.asarray(validation)
@@ -45,29 +33,22 @@ if __name__ == '__main__':
 		model =svm.SVC(kernel ='linear')
 		model.fit(iter_train_x, iter_train_y)
 		predicted_y =model.predict(iter_test_x)
-		print('percentage of accuracy to the svm model is: \n', np.mean(iter_test_y ==predicted_y), '\n')
+		print('the customised cv score per each fold: \n', np.mean(iter_test_y ==predicted_y), '\n')
 
-		model_rf =RandomForestClassifier(n_estimators =10).fit(iter_train_x, iter_train_y)
-		predicted_y_rf =model_rf.predict(iter_test_x)
-		print('percentage of accuracy to the rf model is: \n', np.mean(iter_test_y ==predicted_y_rf), '\n')
-		# print(validation[:,0:4], '\n\n\n')
-		
-	# print(training.shape, '\n', validation.shape )
-
-	# print(iris_data.shape,'\n', train_y)
-	# print(vali_ready.shape)
-	# print(train_y)
-	# validated_train_x =train
+	
 	k_fold =KFold(n_splits =5)
-	# for train_indices, test_indices in k_fold.split(vali_ready):
-		# print('Train: %s | test: %s'%(train_indices, test_indices), '\n')
-
-	# using model to fit k folds of validation sets with default function
+	# comparing cv result with native function
 	k_fold_cross_validation_score =[model.fit(train_x[train], train_y[train]).score(train_x[test], train_y[test])
 		for train ,test in k_fold.split(train_x)]
 
-	# alternatively
-	print(cross_val_score(model, train_x, train_y, cv =k_fold, n_jobs =-1))
+	print('the native cv score is:\n', k_fold_cross_validation_score)
+
+
+	model_rf =RandomForestClassifier(n_estimators =10).fit(train_x, train_y)
+	# comparing the result between svm and random_forest
+	print('the comparison of cv score between svm and rf is:\n') 
+	print(cross_val_score(model, train_x, train_y, cv =k_fold, n_jobs =-1), '\n')
+	print(cross_val_score(model_rf, train_x, train_y, cv =k_fold, n_jobs =-1))
 
 		
 	
