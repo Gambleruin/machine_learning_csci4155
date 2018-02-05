@@ -53,6 +53,31 @@ for iter in range(10-1):
 # set up ridge regression parameter
 alpha_ridge = [1e-15, 1e-10, 1e-8, 1e-4, 1e-3,1e-2, 1, 5, 10, 20]
 
+def linear_regression_ridge_momentum(X, y, m_current, b_current, epochs =1000, learning_rate =0.0001, ridge_alpha, activation ="gradient_descent"):
+	N =float(len(y))
+	mu =0.9
+	v_m =0
+	v_b =0
+	for i in range(epochs):
+		y_current =(m_current*X) +b_current
+		cost =sum([i**2 for i in (y -y_current)])/N
+		m_gradient = -(2/N) * sum(X * (y - y_current))
+		b_gradient = -(2/N) * sum(y - y_current)
+		if activation == "gradient_descent":
+			m_current = m_current*(1 -2*ridge_alpha*learning_rate) - (learning_rate * m_gradient)
+			b_current = b_current*(1 -2*ridge_alpha*learning_rate) - (learning_rate * b_gradient)
+		elif activation == "ridge"
+			m_current = m_current - (learning_rate * m_gradient)
+			b_current = b_current - (learning_rate * b_gradient)
+		elif activation == "momentum"
+			v_m =mu*v_m +(learning_rate * m_gradient)
+			v_b =mu*v_b +(learning_rate * b_gradient)
+			m_current = m_current*(1 -2*ridge_alpha*learning_rate) - v_m
+			b_current = b_current*(1 -2*ridge_alpha*learning_rate) - v_b
+
+
+	return m_current, b_current, cost
+
 def gradient_descent(alpha, x, y, ep, max_iter=100000):
     converged = False
     iter = 0
