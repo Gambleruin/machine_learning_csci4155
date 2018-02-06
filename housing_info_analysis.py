@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy import stats
+import pylab
+from scipy import stats
 
 
 '''
@@ -30,14 +33,16 @@ def linear_regression_ridge_momentum(X, y, m_current, b_current, epochs =1000, l
 	return m_current, b_current, cost
 '''
 
-def gradient_descent(X, y, beta_coef, learning_rate, m):
+def gradient_descent(X, y, beta_coef, learning_rate):
+	m = X.shape[0]
+
 	x_transpose =X.transpose()
 	hypothesis =np.dot(X, beta_coef)
 	loss =hypothesis -y
 	J =np.sum(loss**2)/(2*m)
 	gradient =np.dot(x_transpose, loss)/m
-
-	beta_coef =beta_coef -learning_rate*gradient 
+	beta_coef =beta_coef -learning_rate*gradient
+	print(beta_coef) 
 	return beta_coef
 
 if __name__ == '__main__':
@@ -48,27 +53,41 @@ if __name__ == '__main__':
 	y_ =df.iloc[:,:1].as_matrix()
 	y2 =y_.flatten()
 	# m =float(len(y2))
+	n=np.shape(X_2)
 
-	print(np.shape(X_2), '\n')
-	m=np.shape(X_2)
-
-
-	mean =np.mean(X_2, axis =0)
-	std =np.std(X_2, axis =0)
-	std_data =(X_2 -mean)/std
-
-	std_data =np.c_[np.ones(m), std_data]
+	minmax = (X_2 - X_2.min()) / (X_2.max() - X_2.min())
+	scaled_y = (y2 - y2.min()) / (y2.max() - y2.min())
+	n=np.shape(minmax)
+	minmax =np.c_[np.ones(n), minmax]
 
 
 	beta_coef = np.ones(2)
-	numIterations =100000
-	learning_rate =0.00000000001
+	print(beta_coef)
+
+	numIterations =10000
+	learning_rate =0.0000001
 	# set up ridge regression parameter
 	alpha_ridge = [1e-15, 1e-10, 1e-8, 1e-4, 1e-3,1e-2, 1, 5, 10, 20]
+	
 	for iter in range(0, numIterations):
-		beta_coef =gradient_descent(std_data, y2, beta_coef, learning_rate, m)
+		beta_coef =gradient_descent(minmax, y2, beta_coef, learning_rate)
 
-	print(beta_coef)
+	slope, intercept, r_value, p_value, std_err =stats.linregress(minmax[1], scaled_y)
+	
+	y_predict = beta_coef[0] + beta_coef[1]*minmax
+	pylab.plot(minmax,scaled_y,'o')
+	pylab.plot(minmax,y_predict,'r')
+	pylab.show()
+	
+
+	'''
+	slope, intercept, r_value, p_value, std_err =stats.linregress(X_2, y2)
+
+	plt.plot(X_2, intercept +slope*X_2, 'r', label ='original data')
+	plt.plot(X_2, beta_coef[0] +beta_coef[1]*X_2, 'b', label ='fitted line')
+	plt.legend()
+	plt.show()
+	'''
 
 
 
