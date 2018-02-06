@@ -65,29 +65,29 @@ if __name__ == '__main__':
 	print(beta_coef)
 
 	numIterations =10000
-	learning_rate =0.0000001
+	learning_rate =0.001
 	# set up ridge regression parameter
 	alpha_ridge = [1e-15, 1e-10, 1e-8, 1e-4, 1e-3,1e-2, 1, 5, 10, 20]
 	
 	for iter in range(0, numIterations):
-		beta_coef =gradient_descent(minmax, y2, beta_coef, learning_rate)
-
-	slope, intercept, r_value, p_value, std_err =stats.linregress(minmax[1], scaled_y)
+		beta_coef =gradient_descent(minmax, scaled_y, beta_coef, learning_rate)
 	
-	y_predict = beta_coef[0] + beta_coef[1]*minmax
-	pylab.plot(minmax,scaled_y,'o')
-	pylab.plot(minmax,y_predict,'r')
+	y_predict = beta_coef[0] + beta_coef[1]*X_2
+	pylab.plot(X_2,y2,'o')
+	pylab.plot(X_2,y_predict,'r')
 	pylab.show()
 	
-
+	# using library
 	'''
-	slope, intercept, r_value, p_value, std_err =stats.linregress(X_2, y2)
-
-	plt.plot(X_2, intercept +slope*X_2, 'r', label ='original data')
-	plt.plot(X_2, beta_coef[0] +beta_coef[1]*X_2, 'b', label ='fitted line')
-	plt.legend()
-	plt.show()
+	from sklearn.linear_model import LinearRegression
+	lm =LinearRegression()
+	X_2 =np.c_[np.ones(n), X_2]
+	
+	lm.fit(minmax, y2)
+	print(lm.coef_)
 	'''
+
+
 
 
 
