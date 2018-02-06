@@ -45,6 +45,34 @@ def gradient_descent(X, y, beta_coef, learning_rate):
 	print(beta_coef) 
 	return beta_coef
 
+def gradient_descent_ridge(X, y, beta_coef, learning_rate, ridge_alpha):
+	m = X.shape[0]
+
+	x_transpose =X.transpose()
+	hypothesis =np.dot(X, beta_coef)
+	loss =hypothesis -y
+	J =np.sum(loss**2)/(2*m)
+	gradient =np.dot(x_transpose, loss)/m
+	beta_coef =beta_coef*(1-2*learning_rate*ridge_alpha) -learning_rate*gradient
+	print(beta_coef) 
+	return beta_coef
+
+def gradient_descent_ridge_added_on_momentum(X, y, beta_coef, learning_rate, ridge_alpha):
+	m = X.shape[0]
+	mu =0.9
+	v =np.zeros(2)
+
+	x_transpose =X.transpose()
+	hypothesis =np.dot(X, beta_coef)
+	loss =hypothesis -y
+	J =np.sum(loss**2)/(2*m)
+	gradient =np.dot(x_transpose, loss)/m
+	v =mu*v +learning_rate*gradient
+
+	beta_coef =beta_coef*(1-2*learning_rate*ridge_alpha) -v
+	print(beta_coef) 
+	return beta_coef
+
 if __name__ == '__main__':
 
 	df =pd.read_csv('houses.csv')
@@ -65,12 +93,12 @@ if __name__ == '__main__':
 	print(beta_coef)
 
 	numIterations =10000
-	learning_rate =0.001
+	learning_rate =0.5
 	# set up ridge regression parameter
 	alpha_ridge = [1e-15, 1e-10, 1e-8, 1e-4, 1e-3,1e-2, 1, 5, 10, 20]
 	
 	for iter in range(0, numIterations):
-		beta_coef =gradient_descent(minmax, scaled_y, beta_coef, learning_rate)
+		beta_coef =gradient_descent_ridge_added_on_momentum(minmax, scaled_y, beta_coef, learning_rate, 1e-3)
 	
 	y_predict = beta_coef[0] + beta_coef[1]*X_2
 	pylab.plot(X_2,y2,'o')
