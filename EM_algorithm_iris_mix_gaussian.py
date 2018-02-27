@@ -51,14 +51,12 @@ def initialize_data(K, data):
 	sum_pi =1.0
 	pi =np.zeros(K)
 	pi +=sum_pi/K
-
 	return mu, sigma, pi
 
 def prior_prob(K, mu, sigma, pi, data):
 	pb =0.0
 	for k in range(K):
 		pb +=pi[k]*gdf(data, mu[k], sigma[k])
-
 	return pb 
 
 def gdf(x, mu, sigma):
@@ -154,28 +152,37 @@ def m_step(K, r_nk, data):
 if __name__ == "__main__":
 	# data for unpervised learning using EM algorithm
 	iris_data =np.loadtxt('iris_data.txt', delimiter =',')
-
-	# (customized EM algorithm) number of gaussian mixture 
-	
 	K =3
-	observable_var =iris_data[0: -1:2,0:4]
-	
+	# this is the data 
+	observable_var =iris_data[:,0:4]
+	'''
 	g =mixture.GaussianMixture(n_components =3)
 	g.fit(observable_var)
 	GMM_predict =g.predict(observable_var)
 	print (GMM_predict)
-
 	'''
-	final_posterior_estimate =[]
+	plot_data =[]
+	# this is the RGB color 
+	color_list= gmm(K, observable_var)
+	col_list =color_list.tolist()
+	# predicted_label =[np.argmax(elem) for elem in final_posterior_estimate]
+	# pre_l =np.transpose(predicted_label)
+	feature_list =iris_data[:, 0:2]
+	fea_list =feature_list.tolist()
+	for feature, color in zip(fea_list, col_list):
+		plot_data.append(feature +color)
 
-	final_posterior_estimate= gmm(K, observable_var)
-	# we have 75 instances of data
-	# predicted_label =np.zeros(75)
-	# predicted_label.tolist()
-	predicted_label =[np.argmax(elem) for elem in final_posterior_estimate]
-	pre_l =np.transpose(predicted_label)
-	print (pre_l)
-	'''
+	plot_data_arr =np.asarray(plot_data)
+	pda =np.reshape(plot_data_arr, (150, 5))
+	for t in pda:
+		plt.scatter(t[0], t[1], c =(t[2], t[3], t[4]))
+
+	plt.legend(loc ='upper right')
+	plt.show()
+	
+	
+	
+	
 
 	
 
